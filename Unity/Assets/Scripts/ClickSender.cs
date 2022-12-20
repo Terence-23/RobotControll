@@ -19,11 +19,14 @@ public class ClickSender : MonoBehaviour
     public void SendName()
     {
         // Send the name of the GameObject to the specified IP address and port
+        Debug.Log("IP and port");
+        Debug.Log(ipAddress);
+        Debug.Log(port);
         string message = this.gameObject.name;
         byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
 
-        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.Connect(endPoint);
         socket.Send(data);
         socket.Close();
