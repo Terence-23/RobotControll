@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
-    private static int port;
-    private static String ip;
+    public static int port;
+    public static String ip;
 
     private enum Direction {
         LEFT, RIGHT, UP, DOWN
@@ -56,16 +56,16 @@ public class MainActivity extends AppCompatActivity {
     public static void encode(Direction dir) throws IOException {
         switch (dir) {
             case LEFT:
-                send(ip, port, "L".getBytes(StandardCharsets.US_ASCII));
+                send(ip, port, "LEFT".getBytes(StandardCharsets.US_ASCII));
                 break;
             case UP:
-                send(ip, port, "U".getBytes(StandardCharsets.US_ASCII));
+                send(ip, port, "UP".getBytes(StandardCharsets.US_ASCII));
                 break;
             case DOWN:
-                send(ip, port, "D".getBytes(StandardCharsets.US_ASCII));
+                send(ip, port, "DOWN".getBytes(StandardCharsets.US_ASCII));
                 break;
             case RIGHT:
-                send(ip, port, "R".getBytes(StandardCharsets.US_ASCII));
+                send(ip, port, "RIGHT".getBytes(StandardCharsets.US_ASCII));
                 break;
             default:
                 break;
@@ -79,13 +79,12 @@ public class MainActivity extends AppCompatActivity {
     Button b_right;
     Button b_left;
 
-    EditText editText;
+    protected EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        editText = (EditText) findViewById(R.id.edit_text);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -95,44 +94,75 @@ public class MainActivity extends AppCompatActivity {
         b_left = findViewById(R.id.b_left);
         b_right = findViewById(R.id.b_right);
 
+        editText = (EditText) findViewById(R.id.edit_text);
+
         b_forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    encode(Direction.UP);
-                }catch (Exception e){
 
-                }
+                    Thread udpSend = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                MainActivity.encode(Direction.UP);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                    });
+                    udpSend.start();
             }
         });
         b_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    encode(Direction.DOWN);
-                }catch (Exception e){
+                Thread udpSend = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MainActivity.encode(Direction.DOWN);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
 
-                }
+                });
+                udpSend.start();
             }
         });
         b_right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    encode(Direction.RIGHT);
-                }catch (Exception e){
+                Thread udpSend = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MainActivity.encode(Direction.RIGHT);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
 
-                }
+                });
+                udpSend.start();
             }
         });
         b_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    encode(Direction.LEFT);
-                }catch (Exception e){
+                Thread udpSend = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MainActivity.encode(Direction.LEFT);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
 
-                }
+                });
+                udpSend.start();
             }
         });
 
@@ -159,7 +189,12 @@ public class MainActivity extends AppCompatActivity {
 
                 // Assign the values to the appropriate variables
                 MainActivity.ip = values[0];
-                MainActivity.port = Integer.parseInt(values[1]);            }
+                try{
+                MainActivity.port = Integer.parseInt(values[1]);
+                }catch(Exception e){
+
+                }
+            }
         });
 
 
